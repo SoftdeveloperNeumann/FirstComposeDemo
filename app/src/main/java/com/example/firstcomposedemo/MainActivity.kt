@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,6 +21,7 @@ import androidx.compose.ui.draw.clip
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,8 +38,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
-                    Conversation(messages = messageList)
+                    Column{
+                        Greeting("Android")
+                        Conversation(messages = messageList)
+                    }
+
+
                 }
             }
         }
@@ -109,19 +115,24 @@ fun MessageCard(msg: Message) {
         )
 
         Spacer(modifier = Modifier.width(8.dp))
-
-        Column() {
+        var isExpandet by remember { mutableStateOf(false) }
+        Column(
+            modifier = Modifier.clickable { isExpandet = !isExpandet }
+        ) {
             Text(text = msg.author)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = msg.body)
+            Text(text = msg.body,
+                modifier = Modifier.padding(all= 4.dp),
+                maxLines = if(isExpandet) Int.MAX_VALUE else 1,
+                style = MaterialTheme.typography.body2,
+                overflow = TextOverflow.Ellipsis
+            )
         }
-
-
     }
 }
 
 val messageList = listOf<Message>(
-    Message("Hans","ein kleiner Text um das Beispiel besser zu erklären"),
+    Message("Hans","ein kleiner Text um das Beispiel besser zu erklärenein kleiner Text um das Beispiel besser zu erklärenein kleiner Text um das Beispiel besser zu erklären"),
     Message("Hans","ein kleiner Text um das Beispiel besser zu erklären"),
     Message("Hans","ein kleiner Text um das Beispiel besser zu erklären"),
     Message("Hans","ein kleiner Text um das Beispiel besser zu erklären"),
@@ -153,6 +164,10 @@ fun Conversation(messages: List<Message>){
 fun CardPreview() {
     val message = Message("Frank Neumann", "eine kurze Nachricht")
     FirstComposeDemoTheme {
-        Conversation(messages = messageList)
+        Column() {
+            Greeting(name = "Frank")
+            Conversation(messages = messageList)
+        }
+
     }
 }
